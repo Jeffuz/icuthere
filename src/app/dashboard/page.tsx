@@ -1,15 +1,11 @@
+import { PatientList } from "@/components/dashboard/patient-list";
 import { TriageCard } from "@/components/dashboard/TriageStats";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
 import React from "react";
 
-type TriageLevel =
-  | "Immediate"
-  | "Emergency"
-  | "Urgent"
-  | "Semi"
-  | "Nonurgent";
+type TriageLevel = "Immediate" | "Emergency" | "Urgent" | "Semi" | "Nonurgent";
 
 interface TriageStats {
   level: TriageLevel;
@@ -80,7 +76,9 @@ const page = () => {
             {/* Waiting Patients */}
             <div className="flex flex-col gap-6">
               {/* Header */}
+              <h2 className="text-lg font-medium">Waiting Patients</h2>
               {/* Patient Panels */}
+              <PatientList />
             </div>
             {/* Room Status */}
             <div></div>
