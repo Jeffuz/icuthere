@@ -1,6 +1,6 @@
-export type TriageLevel = "Immediate" | "Emergency" | "Urgent" | "Semi" | "Nonurgent"
+type TriageLevel = "Immediate" | "Emergency" | "Urgent" | "Semi" | "Nonurgent"
 
-export interface TriageStats {
+interface TriageStats {
   level: TriageLevel
   patients: number
   avgMinutes: number

@@ -4,21 +4,21 @@ import Sidebar from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
 import React from "react";
 
-export type TriageLevel =
+type TriageLevel =
   | "Immediate"
   | "Emergency"
   | "Urgent"
   | "Semi"
   | "Nonurgent";
 
-export interface TriageStats {
+interface TriageStats {
   level: TriageLevel;
   patients: number;
   avgMinutes: number;
   color: string;
 }
 
-export const triageData: TriageStats[] = [
+const triageData: TriageStats[] = [
   {
     level: "Immediate",
     patients: 1,
@@ -76,7 +76,15 @@ const page = () => {
             ))}
           </div>
           {/* Hospital Data */}
-          <div></div>
+          <div className="flex space-x-6">
+            {/* Waiting Patients */}
+            <div className="flex flex-col gap-6">
+              {/* Header */}
+              {/* Patient Panels */}
+            </div>
+            {/* Room Status */}
+            <div></div>
+          </div>
         </div>
       </div>
     </main>
