@@ -1,27 +1,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-:root {
-  --color-primary: #3a86ff;
-  --color-secondary: #aebdca;
-  --color-accent: #101720;
-  --color-accent-text: #352f36;
-}
-
-@layer base {
-  body {
-    font-family: "Poppins", sans-serif;
-  }
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-@custom-variant dark (&:is(.dark *));
 
 :root {
-  --radius: 0.625rem;
+  --radius: 0.625rem; 
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
