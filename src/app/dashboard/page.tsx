@@ -1,7 +1,8 @@
 import { PatientList } from "@/components/dashboard/patient-list";
+import RoomStatus from "@/components/dashboard/room-status";
 import { TriageCard } from "@/components/dashboard/TriageStats";
 import Navbar from "@/components/Navbar";
-import Sidebar from "@/components/Sidebar";
+// import Sidebar from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
 import React from "react";
 
@@ -52,9 +53,9 @@ const page = () => {
     <main>
       <Navbar />
       <div className="flex flex-row">
-        <Sidebar />
+        {/* <Sidebar /> */}
         {/* Content */}
-        <div className="flex flex-col w-full p-6 space-y-6">
+        <div className="flex flex-col w-full p-8 space-y-6">
           {/* Stats */}
           <div className="flex w-full justify-between items-center">
             {/* Header */}
@@ -72,16 +73,18 @@ const page = () => {
             ))}
           </div>
           {/* Hospital Data */}
-          <div className="flex space-x-6">
+          <div className="flex min-md:space-x-6 md:flex-row flex-col">
             {/* Waiting Patients */}
-            <div className="flex flex-col gap-6 w-[70%]">
+            <div className="flex flex-col gap-6 min-md:w-[70%]">
               {/* Header */}
               <h2 className="text-lg font-medium">Waiting Patients</h2>
               {/* Patient Panels */}
               <PatientList />
             </div>
             {/* Room Status */}
-            <div></div>
+            <div className="min-md:w-[30%]">
+              <RoomStatus />
+            </div>
           </div>
         </div>
       </div>

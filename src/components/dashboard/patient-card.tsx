@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock } from "lucide-react";
+// import { Clock } from "lucide-react";
 import type { Patient } from "@/types/patient";
 import {
   getTriageBadgeColor,
@@ -17,7 +17,7 @@ export function PatientCard({ patient }: PatientCardProps) {
 
   return (
     <div
-      className={`bg-white rounded-lg border p-5 ${
+      className={`bg-white w-full rounded-lg border p-5 ${
         patient.triageLevel === "Immediate"
           ? "border-[#FF0808]"
           : "border-gray-300"
@@ -31,7 +31,7 @@ export function PatientCard({ patient }: PatientCardProps) {
           </p>
         </div>
         <span
-          className={`px-3 py-1 rounded-full text-sm font-medium ${badgeColor}`}
+          className={`px-2 py-1 rounded-md text-xs font-medium ${badgeColor}`}
         >
           {patient.triageLevel}
         </span>
@@ -42,7 +42,7 @@ export function PatientCard({ patient }: PatientCardProps) {
         <p className="text-gray-700 lie-clamp-1 text-xs">{patient.chiefComplaint}</p>
       </div>
 
-      <div className="grid grid-cols-5 gap-2 mb-4">
+      <div className="grid grid-cols-5 gap-2 mb-6">
         <div className="text-center">
           <p className="text-sm text-gray-500">BP</p>
           <p className="font-medium text-sm">{patient.vitalSigns.bp}</p>
@@ -68,10 +68,11 @@ export function PatientCard({ patient }: PatientCardProps) {
       </div>
 
       <div className="flex justify-between items-center">
-        <div className="flex items-center text-gray-500">
+        {/* <div className="flex items-center text-gray-500">
           <Clock className="h-4 w-4 mr-1" />
           <span>Waiting: {patient.waitingTime} min</span>
-        </div>
+        </div> */}
+        <div></div>
         <button
           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${buttonColor}`}
         >
