@@ -1,16 +1,16 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Atom } from "lucide-react";
+// import { Button } from "@/components/ui/button";
+// import { Atom } from "lucide-react";
 
 export default function Navbar() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b max-xl:px-6 bg-black/30 border-gray-800 backdrop-blur-sm">
+    <header className="sticky top-0 z-50 w-full border-b max-xl:px-6 bg-[#F9FAFB]/95 border-gray-300 backdrop-blur-sm">
       <div className="container mx-auto flex h-16 max-w-[1100px] items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
-          <Atom className="h-6 w-6 text-[#BD8AFC] lime-400" />
-          <div className="font-bold text-xl text-[#F3F4F6]">ICUthere</div>
+          {/* <Atom className="h-6 w-6 text-[#49BCF7] lime-400" /> */}
+          <div className="font-bold text-xl text-[#023E8A]">ICUthere</div>
         </Link>
-        <div className="flex items-center gap-4">
+        {/* <div className="flex items-center gap-4">
           <Button
             size="default"
             className="bg-transparent hover:bg-transparent hover:text-[#BD8AFC] transition duration-300"
@@ -25,7 +25,7 @@ export default function Navbar() {
           >
             <Link href="/">Sign Up</Link>
           </Button>
-        </div>
+        </div> */}
       </div>
     </header>
   );
