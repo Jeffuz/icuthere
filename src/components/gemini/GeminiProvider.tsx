@@ -41,10 +41,40 @@ export function GeminiProvider({ apiKey, children }: GeminiProviderProps) {
       // Remove the data URL prefix to get just the base64 data
       const base64Data = imageData.split(',')[1];
 
-      const prompt = "Analyze what you see in this image and provide a detailed description.";
+      const triagePrompt = `You are a triage assistant. Given an image of a patient, assign an Emergency Severity Index (ESI) level from 1 to 5 using only visible visual cues. Do not assume access to vitals, medical history, or spoken information.
+
+Follow these guidelines:
+
+ESI 1 – Immediate
+- Unconscious or unresponsive
+- Severe respiratory distress (e.g., nasal flaring, cyanosis)
+- Major bleeding or visible amputation
+
+ESI 2 – Emergent
+- Clutching chest with visible sweating
+- Confused, agitated, or uncoordinated behavior
+- Severe burns covering large areas of the body
+
+ESI 3 – Urgent
+- Obvious fractures or limb deformities
+- Controlled but moderate bleeding
+- Visibly in pain but stable (e.g., curled up, guarding abdomen)
+
+ESI 4–5 – Less Urgent/Non-Urgent
+- Minor visible injuries (cuts, bruises, rashes)
+- Calm, responsive, no signs of acute distress
+
+Output format:
+ESI [Level]: [Brief explanation of visible signs]
+Example: ESI 1: Unconscious with cyanosis and active bleeding from left leg
+
+If the image lacks sufficient information, respond with:
+Unclear – recommend manual assessment
+
+Only use what you can see. Prioritize obvious, high-risk cues. Do not infer internal symptoms or use non-visual indicators.`;
       
       const result = await model.generateContent([
-        prompt,
+        triagePrompt,
         {
           inlineData: {
             data: base64Data,
