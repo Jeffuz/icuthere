@@ -74,7 +74,7 @@ const page = () => {
           {/* Hospital Data */}
           <div className="flex space-x-6">
             {/* Waiting Patients */}
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-6 w-[70%]">
               {/* Header */}
               <h2 className="text-lg font-medium">Waiting Patients</h2>
               {/* Patient Panels */}

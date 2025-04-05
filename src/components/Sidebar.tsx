@@ -42,7 +42,7 @@ function NavItem({ href, icon, label }: NavItemProps) {
 
 export default function Sidebar() {
   return (
-    <div className="w-64 h-screen border-r border-gray-200 bg-white">
+    <div className="w-64 border-r border-gray-200 bg-white">
       <div className="flex flex-col py-4">
         <nav className="flex flex-col space-y-3 px-4">
           <NavItem

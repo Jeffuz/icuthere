@@ -20,13 +20,13 @@ export function PatientCard({ patient }: PatientCardProps) {
       className={`bg-white rounded-lg border p-5 ${
         patient.triageLevel === "Immediate"
           ? "border-[#FF0808]"
-          : "border-gray-200"
+          : "border-gray-300"
       }`}
     >
       <div className="flex justify-between items-start mb-2">
         <div>
-          <h3 className="text-xl font-medium text-gray-700">{patient.name}</h3>
-          <p className="text-gray-500">
+          <h3 className="text-lg font-medium text-gray-700">{patient.name}</h3>
+          <p className="text-gray-500 text-sm">
             {patient.age} years • Patient ID: {patient.patientId}
           </p>
         </div>
@@ -38,32 +38,32 @@ export function PatientCard({ patient }: PatientCardProps) {
       </div>
 
       <div className="mb-4">
-        <p className="text-gray-500 font-medium">Chief Complaint:</p>
-        <p className="text-gray-700 lie-clamp-1">{patient.chiefComplaint}</p>
+        <p className="text-gray-500 font-medium text-sm">Chief Complaint:</p>
+        <p className="text-gray-700 lie-clamp-1 text-xs">{patient.chiefComplaint}</p>
       </div>
 
       <div className="grid grid-cols-5 gap-2 mb-4">
         <div className="text-center">
-          <p className="text-xs text-gray-500">BP</p>
-          <p className="font-medium">{patient.vitalSigns.bp}</p>
+          <p className="text-sm text-gray-500">BP</p>
+          <p className="font-medium text-sm">{patient.vitalSigns.bp}</p>
         </div>
         <div className="text-center">
-          <p className="text-xs text-gray-500">HR</p>
-          <p className="font-medium">{patient.vitalSigns.hr}</p>
+          <p className="text-sm text-gray-500">HR</p>
+          <p className="font-medium text-sm">{patient.vitalSigns.hr}</p>
         </div>
         <div className="text-center">
-          <p className="text-xs text-gray-500">RR</p>
-          <p className="font-medium">{patient.vitalSigns.rr}</p>
+          <p className="text-sm text-gray-500">RR</p>
+          <p className="font-medium text-sm">{patient.vitalSigns.rr}</p>
         </div>
         <div className="text-center">
-          <p className="text-xs text-gray-500">Temp</p>
-          <p className="font-medium">{patient.vitalSigns.temp}</p>
+          <p className="text-sm text-gray-500">Temp</p>
+          <p className="font-medium text-sm">{patient.vitalSigns.temp}</p>
         </div>
         <div className="text-center">
-          <p className="text-xs text-gray-500">
+          <p className="text-sm text-gray-500">
             O<sub>2</sub>
           </p>
-          <p className="font-medium">{patient.vitalSigns.o2}%</p>
+          <p className="font-medium text-sm">{patient.vitalSigns.o2}%</p>
         </div>
       </div>
 
