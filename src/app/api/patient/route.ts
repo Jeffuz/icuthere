@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     await dbConnect();
 
     const body = await req.json();
-    const { name, year, triageLevel, vitals, time, patientID } = body;
+    const { name, year, triageLevel, vitals, time, patientID, chiefComplaintSummary } = body;
 
     // Validate required fields
     if (!name || !year || !triageLevel || !patientID) {
@@ -33,13 +33,14 @@ export async function POST(req: NextRequest) {
       patientId: patientID,
       triageLevel,
       vitalSigns: {
-        bp: vitals?.bp || "N/A",
-        hr: parseInt(vitals?.hr) || 0,
-        rr: parseInt(vitals?.rr) || 0,
-        temp: vitals?.temp || "N/A",
-        o2: parseInt(vitals?.o2) || 0,
+        bp: vitals?.bp ?? "N/A",
+        hr: Number.isNaN(parseInt(vitals?.hr)) ? 0 : parseInt(vitals.hr),
+        rr: Number.isNaN(parseInt(vitals?.rr)) ? 0 : parseInt(vitals.rr),
+        temp: vitals?.temp ?? "N/A",
+        o2: Number.isNaN(parseInt(vitals?.o2)) ? 0 : parseInt(vitals.o2),
       },
       waitingTime: parseInt(time) || 0,
+      chiefComplaintSummary,
     });
 
     const savedPatient = await newPatient.save();
