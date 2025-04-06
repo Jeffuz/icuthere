@@ -44,7 +44,7 @@ export default function ClientInterface() {
           </div>
         </div>
         {/* Chat Interface */}
-        <div className="flex items-end h-full px-4 py-4">
+        <div className="flex items-end h-full px-3 py-3">
           {accessToken ? (
             <ClientComponent accessToken={accessToken} />
           ) : (

@@ -56,7 +56,10 @@ const Page = () => {
       ) : (
         <div className="flex w-full min-h-screen gap-2">
           <UserInfo />
-          <TriageAssistantPage />
+          <div className="flex flex-col min-h-screen pb-3 justify-between">
+            <TriageAssistantPage />
+            <Button className="bg-green-500 hover:bg-green-500/80">Check In</Button>
+          </div>
           <div className="flex-1 min-h-screen">
             <ClientInterface />
           </div>
