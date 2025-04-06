@@ -9,9 +9,9 @@ import {
 
 interface PatientCardProps {
   patient: Patient;
+  assignRoom: (patient: Patient) => void;
 }
-
-export function PatientCard({ patient }: PatientCardProps) {
+export function PatientCard({ patient, assignRoom }: PatientCardProps) {
   const badgeColor = getTriageBadgeColor(patient.triageLevel);
   const buttonColor = getTriageButtonColor(patient.triageLevel);
 
@@ -39,7 +39,9 @@ export function PatientCard({ patient }: PatientCardProps) {
 
       <div className="mb-4">
         <p className="text-gray-500 font-medium text-sm">Chief Complaint:</p>
-        <p className="text-gray-700 lie-clamp-1 text-xs">{patient.chiefComplaintSummary}</p>
+        <p className="text-gray-700 lie-clamp-1 text-xs">
+          {patient.chiefComplaintSummary}
+        </p>
       </div>
 
       <div className="grid grid-cols-5 gap-2 mb-6">
@@ -74,6 +76,7 @@ export function PatientCard({ patient }: PatientCardProps) {
         </div> */}
         <div></div>
         <button
+          onClick={() => assignRoom(patient)}
           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${buttonColor}`}
         >
           Assign Room

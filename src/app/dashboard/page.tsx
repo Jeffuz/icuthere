@@ -19,6 +19,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Patient } from "@/types/patient";
+import type { Room } from "@/types/rooms";
+import { rooms as initialRooms } from "@/components/dashboard/room-status";
+
 type TriageLevel = "Immediate" | "Emergency" | "Urgent" | "Semi" | "Nonurgent";
 
 interface TriageStats {
@@ -42,8 +46,35 @@ const Dashboard = () => {
     temp: "",
     o2: "",
   });
-  const [, setPatients] = useState([]);
+  const [patients, setPatients] = useState<Patient[]>([]);
   const [triageStats, setTriageStats] = useState<TriageStats[]>([]);
+  const [rooms, setRooms] = useState<Room[]>(initialRooms);
+
+  
+  const assignRoom = (patient: Patient) => {
+    const firstAvailable = rooms.find((r) => r.status === "Available");
+    if (!firstAvailable) {
+      alert("No available rooms");
+      return;
+    }
+  
+    const updatedRooms: Room[] = rooms.map((room) =>
+      room.id === firstAvailable.id
+        ? {
+            ...room,
+            status: "Occupied" as Room["status"],
+            patientName: patient.name,
+            lastUpdated: new Date().toISOString(),
+          }
+        : room
+    );
+  
+    setRooms(updatedRooms);
+    setPatients((prev) =>
+      prev.filter((p) => p.patientId !== patient.patientId)
+    );
+  };
+  
 
   useEffect(() => {
     const fetchPatients = async () => {
@@ -401,11 +432,11 @@ const Dashboard = () => {
               {/* Header */}
               <h2 className="text-lg font-medium">Waiting Patients</h2>
               {/* Patient Panels */}
-              <PatientList key={listKey} />
+              <PatientList key={listKey} assignRoom={assignRoom} patients={patients} />
             </div>
             {/* Room Status */}
             <div className="min-md:w-[30%]">
-              <RoomStatus />
+              <RoomStatus rooms={rooms}/>
             </div>
           </div>
         </div>
