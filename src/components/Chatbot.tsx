@@ -36,17 +36,13 @@ export default function ClientInterface() {
 
   return (
     <div>
-      <div className="w-full max-w-md shadow-lg border bg-white overflow-hidden min-h-screen flex flex-col justify-between">
+      <div className="bg-white overflow-hidden min-h-screen flex flex-col justify-between border-x">
         {/* Header */}
-        <div className="bg-[#0078d4] text-white px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div>
-              <div className="font-semibold">Emma</div>
-              <div className="text-xs opacity-80 -mt-1">Virtual Assistant</div>
-            </div>
+        <div className="bg-[#0078d4] text-white px-4 py-3 flex items-center justify-between border-t border-x border-[#0078d4]">
+          <div className="flex gap-3 flex-col justify-center">
+              <div className="font-semibold">Chatbot (Virtual Assistant)</div>
           </div>
         </div>
-
         {/* Chat Interface */}
         <div className="flex items-end h-full px-4 py-4">
           {accessToken ? (

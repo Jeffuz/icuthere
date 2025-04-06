@@ -1,7 +1,9 @@
 "use client";
 
 import ClientInterface from "@/components/Chatbot";
+import TriageAssistantPage from "@/components/TriageAssistant";
 import { Button } from "@/components/ui/button";
+import UserInfo from "@/components/UserInfo";
 import { AlertCircle, ChevronRight, PhoneCall } from "lucide-react";
 import React, { useState } from "react";
 
@@ -52,8 +54,12 @@ const Page = () => {
           </main>
         </main>
       ) : (
-        <div className="flex w-full min-h-screen">
-          <ClientInterface />
+        <div className="flex w-full min-h-screen gap-2">
+          <UserInfo />
+          <TriageAssistantPage />
+          <div className="flex-1 min-h-screen">
+            <ClientInterface />
+          </div>
         </div>
       )}
     </>
