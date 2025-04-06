@@ -16,7 +16,7 @@ const Page = () => {
             <div className="max-w-2xl w-full">
               <div className="text-center mb-8">
                 <h1 className="text-4xl font-bold text-[#0196C8] mb-2">
-                  Welcome to the Emergency Department
+                  Welcome to the Hospital
                 </h1>
                 <p className="text-xl text-gray-600">
                   Please select an option below to begin
@@ -53,7 +53,8 @@ const Page = () => {
           </main>
         </main>
       ) : (
-        <></>
+        <>
+        </>
       )}
     </>
   );
