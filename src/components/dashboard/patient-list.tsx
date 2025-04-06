@@ -2,34 +2,20 @@
 
 import { PatientCard } from "./patient-card";
 import type { Patient } from "@/types/patient";
-import { useEffect, useState } from "react";
 
-export function PatientList() {
-  useEffect(() => {
-    const fetchPatients = async () => {
-      try {
-        const response = await fetch("/api/patient");
-        const data = await response.json();
-        setPatients(data);
-      } catch (error) {
-        console.error("Failed to fetch patients:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+interface PatientListProps {
+  patients: Patient[];
+  assignRoom: (patient: Patient) => void;
+}
 
-    fetchPatients();
-  }, []);
+export function PatientList({ patients, assignRoom }: PatientListProps) {
 
-  const [patients, setPatients] = useState<Patient[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  if (loading) return <p>Loading patients...</p>;
+  if (!patients.length) return <p>No waiting patients.</p>;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {patients.map((patient) => (
-        <PatientCard key={patient.patientId} patient={patient} />
+        <PatientCard key={patient.patientId} patient={patient} assignRoom={assignRoom}/>
       ))}
     </div>
   );

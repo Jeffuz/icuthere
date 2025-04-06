@@ -1,7 +1,12 @@
+// RoomStatus.tsx
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RoomCard } from "./room-card";
 import type { Room } from "@/types/rooms";
+
+interface RoomStatusProps {
+  rooms: Room[];
+}
 
 export const rooms: Room[] = [
   {
@@ -56,10 +61,10 @@ export const rooms: Room[] = [
   },
 ];
 
-const RoomStatus = () => {
+const RoomStatus = ({ rooms }: RoomStatusProps) => {
   return (
     <div className="flex flex-col gap-6 w-full">
-      <h2 className="text-lg font-medium">Waiting Patients</h2>
+      <h2 className="text-lg font-medium">Room Status</h2>
       <Tabs defaultValue="all" className="w-full flex-wrap">
         <TabsList className="w-full">
           <TabsTrigger value="all">All</TabsTrigger>
@@ -68,53 +73,24 @@ const RoomStatus = () => {
           <TabsTrigger value="cleaning">Cleaning</TabsTrigger>
           <TabsTrigger value="reserved">Reserved</TabsTrigger>
         </TabsList>
-        <TabsContent value="all" className="mt-4">
-          <div className="flex flex-col gap-3 pr-1">
-            {rooms.map((room) => (
-              <RoomCard key={room.id} room={room} />
-            ))}
-          </div>
-        </TabsContent>
 
-        <TabsContent value="available" className="mt-4">
-          <div className="flex flex-col gap-3 pr-1">
-            {rooms
-              .filter((room) => room.status === "Available")
-              .map((room) => (
-                <RoomCard key={room.id} room={room} />
-              ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="occupied" className="mt-4">
-          <div className="flex flex-col gap-3 pr-1">
-            {rooms
-              .filter((room) => room.status === "Occupied")
-              .map((room) => (
-                <RoomCard key={room.id} room={room} />
-              ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="cleaning" className="mt-4">
-          <div className="flex flex-col gap-3 pr-1">
-            {rooms
-              .filter((room) => room.status === "Cleaning")
-              .map((room) => (
-                <RoomCard key={room.id} room={room} />
-              ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="reserved" className="mt-4">
-          <div className="flex flex-col gap-3 pr-1">
-            {rooms
-              .filter((room) => room.status === "Reserved")
-              .map((room) => (
-                <RoomCard key={room.id} room={room} />
-              ))}
-          </div>
-        </TabsContent>
+        {["all", "available", "occupied", "cleaning", "reserved"].map(
+          (status) => (
+            <TabsContent value={status} className="mt-4" key={status}>
+              <div className="flex flex-col gap-3 pr-1">
+                {(rooms || [])
+                  .filter((room) =>
+                    status === "all"
+                      ? true
+                      : room.status.toLowerCase() === status
+                  )
+                  .map((room) => (
+                    <RoomCard key={room.id} room={room} />
+                  ))}
+              </div>
+            </TabsContent>
+          )
+        )}
       </Tabs>
     </div>
   );
