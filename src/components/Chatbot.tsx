@@ -4,7 +4,11 @@ import { useState, useEffect } from "react";
 import { fetchAccessToken } from "hume";
 import ClientComponent from "@/components/hume/client-component";
 
-export default function ClientInterface() {
+export default function ClientInterface({
+  setChatbotSummary,
+}: {
+  setChatbotSummary: (summary: string) => void;
+}) {
   const [waitingStatus, setWaitingStatus] = useState("waiting");
   const [accessToken, setAccessToken] = useState<string | null>(null);
 
@@ -40,13 +44,16 @@ export default function ClientInterface() {
         {/* Header */}
         <div className="bg-[#0078d4] text-white px-4 py-3 flex items-center justify-between border-t border-x border-[#0078d4]">
           <div className="flex gap-3 flex-col justify-center">
-              <div className="font-semibold">Chatbot (Virtual Assistant)</div>
+            <div className="font-semibold">Chatbot (Virtual Assistant)</div>
           </div>
         </div>
         {/* Chat Interface */}
         <div className="flex items-end h-full px-3 py-3">
           {accessToken ? (
-            <ClientComponent accessToken={accessToken} />
+            <ClientComponent
+              accessToken={accessToken}
+              setChatbotSummary={setChatbotSummary}
+            />
           ) : (
             <div className="flex items-center justify-center h-full text-muted-foreground">
               Loading...

@@ -8,9 +8,11 @@ type MessageType = JSONMessage | ConnectionMessage;
 export default function Messages({
   setMessages,
   messages,
+  setChatbotSummary,
 }: {
   messages: MessageType[];
   setMessages: (updater: (prev: MessageType[]) => MessageType[]) => void;
+  setChatbotSummary: (summary: string) => void;
 }) {
   const { messages: liveMessages } = useVoice();
   const lastLengthRef = useRef(0);
@@ -22,6 +24,17 @@ export default function Messages({
       lastLengthRef.current = liveMessages.length;
     }
   }, [liveMessages, setMessages]);
+
+  useEffect(() => {
+    const summary = messages
+      .filter(
+        (msg) => msg.type === "user_message" || msg.type === "assistant_message"
+      )
+      .map((msg) => ("message" in msg ? msg.message.content : ""))
+      .join(" ");
+
+    setChatbotSummary(summary.slice(0, 500));
+  }, [messages, setChatbotSummary]);
 
   return (
     <div className="flex flex-col gap-2 max-h-[400px] overflow-y-auto">

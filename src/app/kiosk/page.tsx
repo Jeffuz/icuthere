@@ -6,9 +6,31 @@ import { Button } from "@/components/ui/button";
 import UserInfo from "@/components/UserInfo";
 import { AlertCircle, ChevronRight, PhoneCall } from "lucide-react";
 import React, { useState } from "react";
+import { getRandomInt } from "@/utils/random";
 
 const Page = () => {
   const [userStart, setUserStart] = useState<boolean>(false);
+  interface Patient {
+    name: string;
+    year: string;
+    chiefComplaint: string;
+  }
+
+  const initialPatient: Patient = {
+    name: "",
+    year: "",
+    chiefComplaint: "",
+  };
+
+  const [patient, setPatient] = useState<Patient>(initialPatient);
+  const [photoSummary, setPhotoSummary] = useState<string>("");
+  const [chatbotSummary, setChatbotSummary] = useState<string>("");
+  const [
+    // triageResult
+    , setTriageResult] = useState<{
+    level: string;
+    summary: string;
+  } | null>(null);
 
   return (
     <>
@@ -55,13 +77,54 @@ const Page = () => {
         </main>
       ) : (
         <div className="flex w-full min-h-screen gap-2">
-          <UserInfo />
+          <UserInfo patient={patient} setPatient={setPatient} />
           <div className="flex flex-col min-h-screen pb-3 justify-between">
-            <TriageAssistantPage />
-            <Button className="bg-green-500 hover:bg-green-500/80">Check In</Button>
+            <TriageAssistantPage setPhotoSummary={setPhotoSummary} />
+            <Button
+              className="bg-green-500 hover:bg-green-500/80"
+              onClick={async () => {
+                const res = await fetch("/api/triage", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    chiefComplaint: patient.chiefComplaint,
+                    photoSummary,
+                    chatbotSummary,
+                  }),
+                });
+
+                const result = await res.json();
+                setTriageResult(result);
+
+                // Optionally, send to DB
+                const payload = {
+                  name: patient.name,
+                  year: patient.year,
+                  triageLevel: result.level,
+                  chiefComplaintSummary: result.summary,
+                  vitals: {
+                    bp: getRandomInt(1, 5),
+                    hr: getRandomInt(1, 5),
+                    rr: getRandomInt(1, 5),
+                    temp: getRandomInt(1, 5),
+                    o2: getRandomInt(90, 99),
+                  },
+                  time: Date.now(),
+                  patientID: Date.now().toString().slice(-6),
+                };
+
+                await fetch("/api/patient", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(payload),
+                });
+              }}
+            >
+              Check In
+            </Button>
           </div>
           <div className="flex-1 min-h-screen">
-            <ClientInterface />
+            <ClientInterface setChatbotSummary={setChatbotSummary} />
           </div>
         </div>
       )}

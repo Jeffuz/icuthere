@@ -11,8 +11,10 @@ import { Suspense, useRef, useState } from "react";
 
 export default function ClientComponent({
   accessToken,
+  setChatbotSummary,
 }: {
   accessToken: string;
+  setChatbotSummary: (summary: string) => void;
 }) {
   const configId = String(process.env.NEXT_PUBLIC_HUME_CONFIG_ID);
   const timeout = useRef<number | null>(null);
@@ -49,7 +51,11 @@ export default function ClientComponent({
         <div className="flex flex-col h-full w-full">
           {/* Chat Scrollable Area */}
           <div className="py-3 space-y-2" ref={chatRef}>
-            <Messages messages={messages} setMessages={setMessages} />
+            <Messages
+              messages={messages}
+              setMessages={setMessages}
+              setChatbotSummary={setChatbotSummary}
+            />
           </div>
           {/* Controls Section */}
           <div className="pt-3">

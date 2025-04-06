@@ -9,7 +9,11 @@ interface TriageResult {
   explanation: string;
 }
 
-export function VisionAnalyzer() {
+export function VisionAnalyzer({
+  onExplanationReady,
+}: {
+  onExplanationReady: (summary: string) => void;
+}) {
   const { isAnalyzing, result } = useGemini();
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [parsedResult, setParsedResult] = useState<TriageResult | null>(null);
@@ -40,15 +44,14 @@ export function VisionAnalyzer() {
     // Try to parse ESI level and explanation
     const esiMatch = result.match(/ESI\s*(\d):\s*(.*)/i);
     if (esiMatch) {
-      setParsedResult({
-        explanation: esiMatch[2].trim(),
-      });
+      const explanation = esiMatch[2].trim();
+      setParsedResult({ explanation });
+      onExplanationReady(explanation);
     } else {
-      setParsedResult({
-        explanation: result,
-      });
+      setParsedResult({ explanation: result });
+      onExplanationReady(result);
     }
-  }, [result]);
+  }, [onExplanationReady, result]);
 
   return (
     <div className="flex flex-col w-full max-w-2xl h-full">
