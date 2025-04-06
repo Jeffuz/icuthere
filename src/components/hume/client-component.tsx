@@ -1,10 +1,10 @@
 // ./components/ClientComponent.tsx
 "use client";
 
-import { VoiceProvider } from "@humeai/voice-react";
+import { VoiceProvider, JSONMessage, ConnectionMessage } from "@humeai/voice-react";
 import Messages from "./messages";
 import Controls from "./controls";
-import { Suspense, useRef } from "react";
+import { Suspense, useRef, useState } from "react";
 
 export default function ClientComponent({
   accessToken,
@@ -14,6 +14,7 @@ export default function ClientComponent({
   const configId = String(process.env.NEXT_PUBLIC_HUME_CONFIG_ID);
   const timeout = useRef<number | null>(null);
   const ref = useRef<HTMLDivElement>(null);
+  const [messages, setMessages] = useState<(JSONMessage | ConnectionMessage)[]>([]);
   if (!accessToken) {
     return null;
   }
@@ -42,8 +43,8 @@ export default function ClientComponent({
       }, 200);
     }}
     >
-      <Messages />
-      <Controls />
+      <Messages setMessages={setMessages} />
+      <Controls messages={messages} />
     </VoiceProvider>
     </Suspense>
   );
