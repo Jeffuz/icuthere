@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -50,7 +51,7 @@ export function VisionAnalyzer() {
   }, [result]);
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-2xl mx-auto p-4">
+    <div className="flex flex-col w-full max-w-2xl h-full">
       {!capturedImage ? (
         <CameraCapture onCapture={handleCapture} />
       ) : (

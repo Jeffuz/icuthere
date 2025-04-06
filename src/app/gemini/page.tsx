@@ -12,7 +12,7 @@ export default function TriageAssistantPage() {
   }, []);
   
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div>
         <GeminiProvider apiKey={apiKey}>
           <VisionAnalyzer />
         </GeminiProvider>

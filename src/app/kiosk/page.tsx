@@ -1,5 +1,6 @@
 "use client";
 
+import ClientInterface from "@/components/Chatbot";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, ChevronRight, PhoneCall } from "lucide-react";
 import React, { useState } from "react";
@@ -32,9 +33,7 @@ const Page = () => {
                   <ChevronRight className="ml-2 h-6 w-6" />
                 </Button>
 
-                <Button
-                  className="bg-transparent border-red-300 border-2 text-red-700 hover:text-red-700 hover:bg-red-50 text-2xl p-8 h-auto rounded-xl shadow-md flex items-center justify-center"
-                >
+                <Button className="bg-transparent border-red-300 border-2 text-red-700 hover:text-red-700 hover:bg-red-50 text-2xl p-8 h-auto rounded-xl shadow-md flex items-center justify-center">
                   <PhoneCall className="mr-3 h-6 w-6" />
                   Call for Immediate Assistance
                 </Button>
@@ -53,8 +52,9 @@ const Page = () => {
           </main>
         </main>
       ) : (
-        <>
-        </>
+        <div className="flex w-full min-h-screen">
+          <ClientInterface />
+        </div>
       )}
     </>
   );
