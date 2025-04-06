@@ -8,8 +8,10 @@ import { AlertCircle, ChevronRight, PhoneCall } from "lucide-react";
 import React, { useState } from "react";
 import { getRandomFloat, getRandomInt } from "@/utils/random";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
+  const router = useRouter();
   const [userStart, setUserStart] = useState<boolean>(false);
   interface Patient {
     name: string;
@@ -174,11 +176,17 @@ const Page = () => {
                   allergies: "",
                 };
 
-                await fetch("/api/patient", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify(payload),
-                });
+                try {
+                  await fetch("/api/patient", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                  });
+                  // Redirect to success page after successful submission
+                  router.push('/kiosk/success');
+                } catch (error) {
+                  console.error("Error submitting patient data:", error);
+                }
               }}
             >
               Check In
