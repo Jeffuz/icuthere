@@ -8,6 +8,7 @@ export interface IPatient extends Document {
   patientId: string;
   triageLevel: TriageLevel;
   chiefComplaint?: string;
+  chiefComplaintSummary: string;
   vitalSigns: VitalSigns;
   waitingTime: number;
   createdAt: Date;
@@ -37,6 +38,10 @@ const patientSchema = new Schema<IPatient>(
     },
     chiefComplaint: {
       type: String,
+    },
+    chiefComplaintSummary: {
+      type: String,
+      required: [true, "Chief complaint summary is required"], 
     },
     vitalSigns: {
       bp: { type: String, required: true },

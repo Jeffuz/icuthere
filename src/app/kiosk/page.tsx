@@ -7,6 +7,7 @@ import UserInfo from "@/components/UserInfo";
 import { AlertCircle, ChevronRight, PhoneCall } from "lucide-react";
 import React, { useState } from "react";
 import { getRandomInt } from "@/utils/random";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const Page = () => {
   const [userStart, setUserStart] = useState<boolean>(false);
@@ -26,11 +27,64 @@ const Page = () => {
   const [photoSummary, setPhotoSummary] = useState<string>("");
   const [chatbotSummary, setChatbotSummary] = useState<string>("");
   const [
+    ,
     // triageResult
-    , setTriageResult] = useState<{
+    setTriageResult,
+  ] = useState<{
     level: string;
     summary: string;
   } | null>(null);
+
+  const runTriageGemini = async () => {
+    const prompt = `
+You are a triage nurse assistant. Given a patient's self-reported complaint, a visual description from an image, and a conversation summary from a chatbot, determine the appropriate Emergency Severity Index (ESI) level (1–5) and a short chief complaint summary.
+
+Return output ONLY in the following JSON format:
+{
+  "level": "Immediate" | "Emergency" | "Urgent" | "Semi" | "Nonurgent",
+  "summary": "..."
+}
+
+### Guidelines:
+ESI 1 – Immediate  → level: "Immediate"
+ESI 2 – Emergent   → level: "Emergency"
+ESI 3 – Urgent     → level: "Urgent"
+ESI 4 – Less urgent → level: "Semi"
+ESI 5 – Non-urgent → level: "Nonurgent"
+
+If the information is insufficient to determine severity, default to:
+{
+  "level": "Nonurgent",
+  "summary": "Unable to determine based on available data"
+}
+
+---
+Input:
+Chief Complaint: ${patient.chiefComplaint}
+Photo Description: ${photoSummary}
+Chatbot Summary: ${chatbotSummary}
+
+Respond only with the JSON.
+`;
+
+    const genAI = new GoogleGenerativeAI(
+      process.env.NEXT_PUBLIC_GOOGLE_AI_API_KEY || ""
+    );
+
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-lite" });
+
+    try {
+      const result = await model.generateContent(prompt);
+      const text = result.response.text().trim();
+      return JSON.parse(text);
+    } catch (err) {
+      console.warn("Gemini fallback:", err);
+      return {
+        level: "Nonurgent",
+        summary: "Unable to determine based on available data",
+      };
+    }
+  };
 
   return (
     <>
@@ -83,25 +137,16 @@ const Page = () => {
             <Button
               className="bg-green-500 hover:bg-green-500/80"
               onClick={async () => {
-                const res = await fetch("/api/triage", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    chiefComplaint: patient.chiefComplaint,
-                    photoSummary,
-                    chatbotSummary,
-                  }),
-                });
+                // ✅ 1. Generate triage data from Gemini
+                const triage = await runTriageGemini();
+                setTriageResult(triage);
 
-                const result = await res.json();
-                setTriageResult(result);
-
-                // Optionally, send to DB
+                // ✅ 2. Build final payload with vitals + time + ID
                 const payload = {
                   name: patient.name,
                   year: patient.year,
-                  triageLevel: result.level,
-                  chiefComplaintSummary: result.summary,
+                  triageLevel: triage.level,
+                  chiefComplaintSummary: triage.summary,
                   vitals: {
                     bp: getRandomInt(1, 5),
                     hr: getRandomInt(1, 5),
@@ -113,6 +158,7 @@ const Page = () => {
                   patientID: Date.now().toString().slice(-6),
                 };
 
+                // ✅ 3. Post to database
                 await fetch("/api/patient", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
