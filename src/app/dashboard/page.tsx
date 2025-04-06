@@ -1,5 +1,5 @@
 "use client";
-
+import { useState, useEffect } from "react";
 import { PatientList } from "@/components/dashboard/patient-list";
 import RoomStatus from "@/components/dashboard/room-status";
 import { TriageCard } from "@/components/dashboard/TriageStats";
@@ -28,40 +28,135 @@ interface TriageStats {
   color: string;
 }
 
-const triageData: TriageStats[] = [
-  {
-    level: "Immediate",
-    patients: 1,
-    avgMinutes: 139,
-    color: "#FF0808",
-  },
-  {
-    level: "Emergency",
-    patients: 1,
-    avgMinutes: 132,
-    color: "#FF8406",
-  },
-  {
-    level: "Urgent",
-    patients: 2,
-    avgMinutes: 155,
-    color: "#FFFF09",
-  },
-  {
-    level: "Semi",
-    patients: 1,
-    avgMinutes: 167,
-    color: "#089C07",
-  },
-  {
-    level: "Nonurgent",
-    patients: 1,
-    avgMinutes: 182,
-    color: "#0A6BCE",
-  },
-];
+const Dashboard = () => {
+  const [listKey, setListKey] = useState(0);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [form, setForm] = useState({
+    name: "",
+    age: "",
+    chiefComplaint: "",
+    triageLevel: "",
+    bp: "",
+    hr: "",
+    rr: "",
+    temp: "",
+    o2: "",
+  });
+  const [, setPatients] = useState([]);
+  const [triageStats, setTriageStats] = useState<TriageStats[]>([]);
 
-const page = () => {
+  useEffect(() => {
+    const fetchPatients = async () => {
+      try {
+        const res = await fetch("/api/patient");
+        const data = await res.json();
+        setPatients(data);
+
+        const colorMap: Record<TriageLevel, string> = {
+          Immediate: "#FF0808",
+          Emergency: "#FF8406",
+          Urgent: "#FFFF09",
+          Semi: "#089C07",
+          Nonurgent: "#0A6BCE",
+        };
+
+        // Count patients per triage level
+        const counts: Record<TriageLevel, number> = {
+          Immediate: 0,
+          Emergency: 0,
+          Urgent: 0,
+          Semi: 0,
+          Nonurgent: 0,
+        };
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        data.forEach((p: any) => {
+          if (counts[p.triageLevel as TriageLevel] !== undefined) {
+            counts[p.triageLevel as TriageLevel]++;
+          }
+        });
+
+        // Create TriageStats array
+        const stats: TriageStats[] = (Object.keys(counts) as TriageLevel[]).map(
+          (level) => ({
+            level,
+            patients: counts[level],
+            avgMinutes: 0, // optional: update this if you have wait time info
+            color: colorMap[level],
+          })
+        );
+
+        setTriageStats(stats);
+      } catch (err) {
+        console.error("Failed to fetch patients", err);
+      }
+    };
+
+    fetchPatients();
+  }, []);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleTriageChange = (value: string) => {
+    setForm((prev) => ({ ...prev, triageLevel: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const payload = {
+      name: form.name,
+      year: form.age,
+      triageLevel: form.triageLevel,
+      vitalSigns: {
+        bp: form.bp,
+        hr: form.hr,
+        rr: form.rr,
+        temp: form.temp,
+        o2: form.o2,
+      },
+      time: Date.now(),
+      patientID: Date.now().toString().slice(-6),
+      chiefComplaintSummary: form.chiefComplaint,
+    };
+
+    try {
+      const res = await fetch("/api/patient", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        alert("Patient registered successfully!");
+        setForm({
+          name: "",
+          age: "",
+          chiefComplaint: "",
+          triageLevel: "",
+          bp: "",
+          hr: "",
+          rr: "",
+          temp: "",
+          o2: "",
+        });
+        setDialogOpen(false);
+        setListKey((prev) => prev + 1);
+      } else {
+        const error = await res.json();
+        alert("Error: " + error.error);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to register patient.");
+    }
+  };
+
   return (
     <main>
       <Navbar />
@@ -75,7 +170,7 @@ const page = () => {
             <h1 className="text-[#023E8A] font-bold text-2xl">
               Emergency Department Triage
             </h1>
-            <Dialog>
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
                 <Button className="bg-[#0196C8] hover:bg-[#0196C8]/80 text-white h-[42px]">
                   Register New Patient
@@ -88,7 +183,7 @@ const page = () => {
                     Register New Patient
                   </DialogTitle>
                 </DialogHeader>
-                <form className="space-y-6">
+                <form className="space-y-6" onSubmit={handleSubmit}>
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     {/* Patient Name */}
                     <div className="space-y-2">
@@ -98,7 +193,8 @@ const page = () => {
                       <Input
                         id="name"
                         name="name"
-                        placeholder="Full name"
+                        value={form.name}
+                        onChange={handleChange}
                         required
                       />
                     </div>
@@ -112,7 +208,8 @@ const page = () => {
                         id="age"
                         name="age"
                         type="number"
-                        placeholder="Age in years"
+                        value={form.age}
+                        onChange={handleChange}
                         required
                       />
                     </div>
@@ -126,9 +223,9 @@ const page = () => {
                     <Textarea
                       id="chiefComplaint"
                       name="chiefComplaint"
-                      placeholder="Describe the main reason for visit"
+                      value={form.chiefComplaint}
+                      onChange={handleChange}
                       required
-                      className="min-h-[100px]"
                     />
                   </div>
 
@@ -137,15 +234,20 @@ const page = () => {
                     <Label className="text-base">
                       Triage Level <span className="text-red-500">*</span>
                     </Label>
-                    <RadioGroup className="flex flex-wrap gap-6" required>
+                    <RadioGroup
+                      className="flex flex-wrap gap-6"
+                      required
+                      onValueChange={handleTriageChange}
+                      value={form.triageLevel}
+                    >
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem
-                          value="Critical"
-                          id="critical"
+                          value="Immediate"
+                          id="imediate"
                           className="text-[#FF0808] border-[#FF0808"
                         />
                         <Label
-                          htmlFor="critical"
+                          htmlFor="immediate"
                           className="text-[#FF0808] font-medium"
                         >
                           Critical
@@ -216,7 +318,9 @@ const page = () => {
                         </Label>
                         <Input
                           id="bp"
-                          name="vitalSigns.bp"
+                          name="bp"
+                          value={form.bp}
+                          onChange={handleChange}
                           placeholder="120/80"
                         />
                       </div>
@@ -224,7 +328,13 @@ const page = () => {
                         <Label htmlFor="hr" className="text-sm">
                           Heart Rate
                         </Label>
-                        <Input id="hr" name="vitalSigns.hr" placeholder="BPM" />
+                        <Input
+                          id="hr"
+                          name="hr"
+                          value={form.hr}
+                          onChange={handleChange}
+                          placeholder="BPM"
+                        />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="rr" className="text-sm">
@@ -232,7 +342,9 @@ const page = () => {
                         </Label>
                         <Input
                           id="rr"
-                          name="vitalSigns.rr"
+                          name="rr"
+                          value={form.rr}
+                          onChange={handleChange}
                           placeholder="breaths/m"
                         />
                       </div>
@@ -242,7 +354,9 @@ const page = () => {
                         </Label>
                         <Input
                           id="temp"
-                          name="vitalSigns.temp"
+                          name="temp"
+                          value={form.temp}
+                          onChange={handleChange}
                           placeholder="°F"
                         />
                       </div>
@@ -250,7 +364,13 @@ const page = () => {
                         <Label htmlFor="o2" className="text-sm">
                           O₂ Saturation
                         </Label>
-                        <Input id="o2" name="vitalSigns.o2" placeholder="%" />
+                        <Input
+                          id="o2"
+                          name="o2"
+                          value={form.o2}
+                          onChange={handleChange}
+                          placeholder="%"
+                        />
                       </div>
                     </div>
                   </div>
@@ -269,10 +389,11 @@ const page = () => {
           </div>
           {/* Current Hostpital Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {triageData.map((triage) => (
+            {triageStats.map((triage) => (
               <TriageCard key={triage.level} data={triage} />
             ))}
           </div>
+
           {/* Hospital Data */}
           <div className="flex min-md:space-x-6 md:flex-row flex-col">
             {/* Waiting Patients */}
@@ -280,7 +401,7 @@ const page = () => {
               {/* Header */}
               <h2 className="text-lg font-medium">Waiting Patients</h2>
               {/* Patient Panels */}
-              <PatientList />
+              <PatientList key={listKey} />
             </div>
             {/* Room Status */}
             <div className="min-md:w-[30%]">
@@ -293,4 +414,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Dashboard;

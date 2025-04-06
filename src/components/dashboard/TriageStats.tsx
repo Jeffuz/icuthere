@@ -28,10 +28,10 @@ export function TriageCard({ data }: TriageCardProps) {
           <div className="text-sm text-gray-500">patients</div>
         </div>
 
-        <div className="text-right">
+        {/* <div className="text-right">
           <div className="text-2xl font-bold">{data.avgMinutes}</div>
           <div className="text-sm text-gray-500">avg min</div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
