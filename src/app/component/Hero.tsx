@@ -29,7 +29,7 @@ const Hero = () => {
           asChild
         >
           <Link
-            href="/"
+            href="/demo"
             className="inline-flex items-center transition duration-200"
           >
             Get Started
@@ -42,7 +42,7 @@ const Hero = () => {
           variant={"outline"}
         >
           <Link
-            href="/"
+            href="/demo"
             className="inline-flex items-center transition duration-200"
           >
             Demo
