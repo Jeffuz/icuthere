@@ -2,6 +2,7 @@
 
 import { GeminiProvider, VisionAnalyzer } from "@/components/gemini";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function TriageAssistantPage() {
   const [apiKey, setApiKey] = useState("");
@@ -48,12 +49,12 @@ export default function TriageAssistantPage() {
       </div>
       
       <div className="mt-8 text-center">
-        <a 
+        <Link
           href="/" 
           className="text-blue-500 hover:underline"
         >
           ← Back to home
-        </a>
+        </Link>
       </div>
     </div>
   );
