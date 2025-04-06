@@ -15,7 +15,7 @@ export default function Messages({
   }, [messages, setMessages]);
 
   return (
-    <div className="flex flex-col gap-2 max-h-[400px] overflow-y-auto px-4 py-2">
+    <div className="flex flex-col gap-2 max-h-[400px] overflow-y-auto">
       {messages.map((msg, index) => {
         if (msg.type === "user_message" || msg.type === "assistant_message") {
           const isUser = msg.message.role === "user";
