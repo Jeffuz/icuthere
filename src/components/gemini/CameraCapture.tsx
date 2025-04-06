@@ -72,6 +72,7 @@ export function CameraCapture({ onCapture }: CameraCaptureProps) {
       } else {
         throw new Error("Video element not available");
       }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       // Handle errors with specific messages
       console.error("Camera access error:", err);
@@ -146,6 +147,7 @@ export function CameraCapture({ onCapture }: CameraCaptureProps) {
       // Process with Gemini
       processWithGemini(imageData);
       
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.error("Error capturing image:", err);
       setErrorMessage(`Failed to capture: ${err.message}`);
