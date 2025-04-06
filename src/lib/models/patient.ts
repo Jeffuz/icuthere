@@ -11,6 +11,15 @@ export interface IPatient extends Document {
   chiefComplaintSummary: string;
   vitalSigns: VitalSigns;
   waitingTime: number;
+  // Medical analysis attributes
+  onsetTime?: string;
+  severity?: number;
+  location?: string;
+  progression?: string;
+  trigger?: string;
+  mobility?: string;
+  medicalHistory?: string;
+  allergies?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -53,6 +62,33 @@ const patientSchema = new Schema<IPatient>(
     waitingTime: {
       type: Number,
       default: 0,
+    },
+    // Medical analysis attributes
+    onsetTime: {
+      type: String,
+    },
+    severity: {
+      type: Number,
+      min: 0,
+      max: 10,
+    },
+    location: {
+      type: String,
+    },
+    progression: {
+      type: String,
+    },
+    trigger: {
+      type: String,
+    },
+    mobility: {
+      type: String,
+    },
+    medicalHistory: {
+      type: String,
+    },
+    allergies: {
+      type: String,
     },
   },
   {

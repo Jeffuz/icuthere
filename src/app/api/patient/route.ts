@@ -12,23 +12,34 @@ const validTriageLevels = [
 
 export async function POST(req: NextRequest) {
   try {
-    // Connect to the MongoDB database
     await dbConnect();
 
     const body = await req.json();
     console.log("Incoming body:", body);
+    
+    // Destructure all fields defined in the schema
     const {
       name,
-      year,
+      age,
+      patientId,
       triageLevel,
-      vitals,
-      time,
-      patientID,
+      chiefComplaint,
       chiefComplaintSummary,
+      vitalSigns,
+      waitingTime,
+      // Medical analysis fields
+      onsetTime,
+      severity,
+      location,
+      progression,
+      trigger,
+      mobility,
+      medicalHistory,
+      allergies,
     } = body;
 
-    // Validate required fields
-    if (!name || !year || !triageLevel || !patientID) {
+    // // Validate required fields based on schema
+    if (!name || !age || !patientId || !triageLevel || !chiefComplaintSummary) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -42,20 +53,38 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Validate vital signs structure
+    if (!vitalSigns || !vitalSigns.bp || !vitalSigns.hr || !vitalSigns.rr || !vitalSigns.temp || !vitalSigns.o2) {
+      return NextResponse.json(
+        { error: "Missing or invalid vital signs" },
+        { status: 400 }
+      );
+    }
+
     const newPatient = new Patient({
       name,
-      age: parseInt(year),
-      patientId: patientID,
+      age: parseInt(age),
+      patientId,
       triageLevel,
-      vitalSigns: {
-        bp: vitals?.bp ?? "N/A",
-        hr: Number.isNaN(parseInt(vitals?.hr)) ? 0 : parseInt(vitals.hr),
-        rr: Number.isNaN(parseInt(vitals?.rr)) ? 0 : parseInt(vitals.rr),
-        temp: vitals?.temp ?? "N/A",
-        o2: Number.isNaN(parseInt(vitals?.o2)) ? 0 : parseInt(vitals.o2),
-      },
-      waitingTime: parseInt(time) || 0,
+      chiefComplaint,
       chiefComplaintSummary,
+      vitalSigns: {
+        bp: vitalSigns.bp,
+        hr: vitalSigns.hr,
+        rr: vitalSigns.rr,
+        temp: vitalSigns.temp,
+        o2: vitalSigns.o2,
+      },
+      waitingTime: waitingTime || 0,
+      // Include optional medical analysis fields
+      onsetTime,
+      severity,
+      location,
+      progression,
+      trigger,
+      mobility,
+      medicalHistory,
+      allergies,
     });
 
     const savedPatient = await newPatient.save();
@@ -68,7 +97,6 @@ export async function POST(req: NextRequest) {
       },
       { status: 201 }
     );
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Error in POST /api/patient:", error.message);
     return NextResponse.json({ error: "Database Error" }, { status: 500 });

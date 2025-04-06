@@ -54,12 +54,14 @@ export default function ClientComponent({
             <Messages
               messages={messages}
               setMessages={setMessages}
-              setChatbotSummary={setChatbotSummary}
             />
           </div>
           {/* Controls Section */}
           <div className="pt-3">
-            <Controls messages={messages} />
+            <Controls
+              messages={messages}
+              setChatbotSummary={setChatbotSummary}
+            />
           </div>
         </div>
       </VoiceProvider>

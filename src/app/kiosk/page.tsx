@@ -36,47 +36,56 @@ const Page = () => {
   } | null>(null);
 
   const runTriageGemini = async () => {
-    const prompt = `
-You are a triage nurse assistant. Given a patient's self-reported complaint, a visual description from an image, and a conversation summary from a chatbot, determine the appropriate Emergency Severity Index (ESI) level (1–5) and a short chief complaint summary.
-
-Return output ONLY in the following JSON format:
-{
-  "level": "Immediate" | "Emergency" | "Urgent" | "Semi" | "Nonurgent",
-  "summary": "..."
-}
-
-### Guidelines:
-ESI 1 – Immediate  → level: "Immediate"
-ESI 2 – Emergent   → level: "Emergency"
-ESI 3 – Urgent     → level: "Urgent"
-ESI 4 – Less urgent → level: "Semi"
-ESI 5 – Non-urgent → level: "Nonurgent"
-
-If the information is insufficient to determine severity, default to:
-{
-  "level": "Nonurgent",
-  "summary": "Unable to determine based on available data"
-}
-
----
-Input:
-Chief Complaint: ${patient.chiefComplaint}
-Photo Description: ${photoSummary}
-Chatbot Summary: ${chatbotSummary}
-
-Respond only with the JSON.
-`;
+    console.log("Running Triage Gemini");
+    
+    const prompt = {
+      task: "You are a triage nurse assistant. Analyze the provided patient information and determine the appropriate Emergency Severity Index (ESI) level.",
+      outputFormat: "Return the results as a JSON object following the schema below.",
+      schema: {
+        type: "object",
+        properties: {
+          level: {
+            type: "string",
+            enum: ["Immediate", "Emergency", "Urgent", "Semi", "Nonurgent"],
+            description: "ESI Level: 1=Immediate, 2=Emergency, 3=Urgent, 4=Semi, 5=Nonurgent"
+          },
+          summary: {
+            type: "string",
+            description: "Brief summary of chief complaint and triage assessment"
+          }
+        },
+        required: ["level", "summary"]
+      },
+      guidelines: {
+        "ESI 1": "Immediate - Life-threatening conditions requiring immediate intervention",
+        "ESI 2": "Emergency - High-risk situation or severe pain/distress",
+        "ESI 3": "Urgent - Multiple resources needed, moderate symptoms",
+        "ESI 4": "Semi - One resource needed, mild symptoms",
+        "ESI 5": "Nonurgent - No resources needed, minor symptoms"
+      },
+      input: {
+        chiefComplaint: patient.chiefComplaint,
+        photoDescription: photoSummary,
+        chatbotSummary: chatbotSummary
+      }
+    };
 
     const genAI = new GoogleGenerativeAI(
-      process.env.NEXT_PUBLIC_GOOGLE_AI_API_KEY || ""
+      process.env.NEXT_PUBLIC_GEMINI_API_KEY || ""
     );
 
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-lite" });
 
     try {
-      const result = await model.generateContent(prompt);
+      console.log("Prompt:", JSON.stringify(prompt));
+      const result = await model.generateContent(JSON.stringify(prompt));
       const text = result.response.text().trim();
-      return JSON.parse(text);
+      // Extract JSON from the response similar to route.ts
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        throw new Error('Failed to extract JSON from Gemini response');
+      }
+      return JSON.parse(jsonMatch[0]);
     } catch (err) {
       console.warn("Gemini fallback:", err);
       return {
@@ -142,18 +151,27 @@ Respond only with the JSON.
 
                 const payload = {
                   name: patient.name,
-                  year: patient.year,
+                  age: patient.year,
+                  patientId: Date.now().toString().slice(-6),
                   triageLevel: triage.level,
+                  chiefComplaint: chatbotSummary,
                   chiefComplaintSummary: triage.summary,
-                  vitals: {
-                    bp: `${getRandomInt(100, 140)}/${getRandomInt(60, 90)}`,  // systolic/diastolic
-                    hr: getRandomInt(60, 100),    // bpm
-                    rr: getRandomInt(12, 20),     // breaths/min
-                    temp: getRandomFloat(97.0, 99.5).toFixed(1), // Fahrenheit
-                    o2: getRandomInt(95, 100),    // O2 saturation %
+                  vitalSigns: {
+                    bp: `${getRandomInt(100, 140)}/${getRandomInt(60, 90)}`,
+                    hr: `${getRandomInt(60, 100)}`,
+                    rr: `${getRandomInt(12, 20)}`,
+                    temp: `${getRandomFloat(97.0, 99.5).toFixed(1)}`,
+                    o2: `${getRandomInt(95, 100)}`,
                   },
-                  time: Date.now(),
-                  patientID: Date.now().toString().slice(-6),
+                  waitingTime: 0,
+                  onsetTime: "",
+                  severity: 0,
+                  location: "",
+                  progression: "",
+                  trigger: "",
+                  mobility: "",
+                  medicalHistory: "",
+                  allergies: "",
                 };
 
                 await fetch("/api/patient", {

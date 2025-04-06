@@ -26,8 +26,10 @@ interface AssessmentResponse {
 
 export default function Controls({
   messages,
+  setChatbotSummary,
 }: {
   messages: (JSONMessage | ConnectionMessage)[];
+  setChatbotSummary: (summary: string) => void;
 }) {
   const { connect, disconnect, readyState } = useVoice();
   const [connecting, setConnecting] = useState(false);
@@ -95,6 +97,7 @@ export default function Controls({
               .then((assessment) => {
                 // Handle successful parsing
                 console.log("Assessment complete:", assessment);
+                setChatbotSummary(assessment.chiefComplaint);
               })
               .catch((error) => {
                 // Handle any errors
