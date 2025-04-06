@@ -49,7 +49,7 @@ export default function ClientComponent({
         <div className="flex flex-col justify-between h-full">
           {/* Chat Scrollable Area */}
           <div className="py-3 space-y-2" ref={chatRef}>
-            <Messages setMessages={setMessages} />
+            <Messages messages={messages} setMessages={setMessages} />
           </div>
           {/* Controls Section */}
           <div className="pt-3">
