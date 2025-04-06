@@ -1,28 +1,20 @@
 // ./components/ClientComponent.tsx
 "use client";
-
 import { VoiceProvider } from "@humeai/voice-react";
 import Messages from "./messages";
 import Controls from "./controls";
-import { Suspense, useRef } from "react";
-
+import { ComponentRef, useRef } from "react";
 export default function ClientComponent({
   accessToken,
 }: {
   accessToken: string;
 }) {
-  const configId = String(process.env.NEXT_PUBLIC_HUME_CONFIG_ID);
   const timeout = useRef<number | null>(null);
   const ref = useRef<HTMLDivElement>(null);
-  if (!accessToken) {
-    return null;
-  }
-
-  console.log('client accessToken', accessToken)
-
+  const configId = String(process.env.NEXT_PUBLIC_HUME_CONFIG_ID);
+  console.log("configId", configId);
   return (
-    <Suspense fallback={<div>Loading voice interface...</div>}>
-      <VoiceProvider
+    <VoiceProvider
     auth={{ type: "accessToken", value: accessToken }}
     configId={configId}
     onMessage={() => {
@@ -45,6 +37,5 @@ export default function ClientComponent({
       <Messages />
       <Controls />
     </VoiceProvider>
-    </Suspense>
   );
 }

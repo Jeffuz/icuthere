@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Mic, MicOff, Video, VideoOff, Clock, CheckCircle } from "lucide-react"
-// import VoiceAssistant from "@/components/voice-assistant"
+import VoiceAssistant from "@/app/component/hume/voice-assistant"
 import { fetchAccessToken } from "hume"
 import ClientComponent from "@/components/hume/client-component"
 
@@ -13,25 +13,24 @@ export default function ClientInterface() {
   const [isRecording, setIsRecording] = useState(false)
   const [isVideoOn, setIsVideoOn] = useState(false)
   const [waitingStatus, setWaitingStatus] = useState("waiting") // "waiting" or "ready"
-  const [waitTime] = useState(15) // minutes
-  const videoRef = useRef(null)
+  const [waitTime, setWaitTime] = useState(15) // minutes
   const [accessToken, setAccessToken] = useState<string | null>(null)
+  const videoRef = useRef(null)
 
   useEffect(() => {
-    const fetchToken = async () => {
+    async function fetchToken() {
       const token = await fetchAccessToken({
         apiKey: String(process.env.NEXT_PUBLIC_HUME_API_KEY),
         secretKey: String(process.env.NEXT_PUBLIC_HUME_SECRET_KEY),
-      });
+      })
 
       if (!token) {
-        throw new Error();
+        console.error("Failed to fetch access token")
       }
-      setAccessToken(token);
-    };
+      setAccessToken(token)
+    }
 
-    fetchToken();
-
+    fetchToken()
   }, [])
 
   const toggleRecording = () => {
@@ -111,9 +110,7 @@ export default function ClientInterface() {
             </div>
 
             {accessToken ? (
-              <ClientComponent
-                accessToken={accessToken}
-              />
+              <ClientComponent accessToken={accessToken} />
             ) : (
               <div className="flex items-center justify-center p-4">
                 <span className="text-muted-foreground">Loading...</span>
@@ -121,21 +118,6 @@ export default function ClientInterface() {
             )}
           </CardContent>
           <CardFooter className="flex justify-between">
-            <Button
-              variant={isRecording ? "default" : "outline"}
-              onClick={toggleRecording}
-              className={isRecording ? "bg-red-500 hover:bg-red-600" : ""}
-            >
-              {isRecording ? (
-                <span className="flex items-center gap-2">
-                  <MicOff className="h-4 w-4" /> Stop
-                </span>
-              ) : (
-                <span className="flex items-center gap-2">
-                  <Mic className="h-4 w-4" /> Start
-                </span>
-              )}
-            </Button>
             <Button variant={isVideoOn ? "default" : "outline"} onClick={toggleVideo}>
               {isVideoOn ? (
                 <span className="flex items-center gap-2">
