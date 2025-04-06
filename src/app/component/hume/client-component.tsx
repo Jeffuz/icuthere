@@ -3,7 +3,7 @@
 import { VoiceProvider } from "@humeai/voice-react";
 import Messages from "./messages";
 import Controls from "./controls";
-import { ComponentRef, useRef } from "react";
+import { useRef } from "react";
 export default function ClientComponent({
   accessToken,
 }: {
