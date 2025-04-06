@@ -62,6 +62,7 @@ const triageData: TriageStats[] = [
 ];
 
 const Dashboard = () => {
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState({
     name: "",
     age: "",
@@ -124,6 +125,7 @@ const Dashboard = () => {
           temp: "",
           o2: "",
         });
+        setDialogOpen(false);
       } else {
         const error = await res.json();
         alert("Error: " + error.error);
@@ -147,7 +149,7 @@ const Dashboard = () => {
             <h1 className="text-[#023E8A] font-bold text-2xl">
               Emergency Department Triage
             </h1>
-            <Dialog>
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
                 <Button className="bg-[#0196C8] hover:bg-[#0196C8]/80 text-white h-[42px]">
                   Register New Patient
