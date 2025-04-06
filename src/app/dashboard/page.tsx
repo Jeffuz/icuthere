@@ -62,6 +62,7 @@ const triageData: TriageStats[] = [
 ];
 
 const Dashboard = () => {
+  const [listKey, setListKey] = useState(0);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState({
     name: "",
@@ -126,6 +127,7 @@ const Dashboard = () => {
           o2: "",
         });
         setDialogOpen(false);
+        setListKey((prev) => prev + 1);
       } else {
         const error = await res.json();
         alert("Error: " + error.error);
@@ -379,7 +381,7 @@ const Dashboard = () => {
               {/* Header */}
               <h2 className="text-lg font-medium">Waiting Patients</h2>
               {/* Patient Panels */}
-              <PatientList />
+              <PatientList key={listKey} />
             </div>
             {/* Room Status */}
             <div className="min-md:w-[30%]">
