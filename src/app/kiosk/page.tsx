@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import UserInfo from "@/components/UserInfo";
 import { AlertCircle, ChevronRight, PhoneCall } from "lucide-react";
 import React, { useState } from "react";
-import { getRandomInt } from "@/utils/random";
+import { getRandomFloat, getRandomInt } from "@/utils/random";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const Page = () => {
@@ -137,28 +137,25 @@ Respond only with the JSON.
             <Button
               className="bg-green-500 hover:bg-green-500/80"
               onClick={async () => {
-                // ✅ 1. Generate triage data from Gemini
                 const triage = await runTriageGemini();
                 setTriageResult(triage);
 
-                // ✅ 2. Build final payload with vitals + time + ID
                 const payload = {
                   name: patient.name,
                   year: patient.year,
                   triageLevel: triage.level,
                   chiefComplaintSummary: triage.summary,
                   vitals: {
-                    bp: getRandomInt(1, 5),
-                    hr: getRandomInt(1, 5),
-                    rr: getRandomInt(1, 5),
-                    temp: getRandomInt(1, 5),
-                    o2: getRandomInt(90, 99),
+                    bp: `${getRandomInt(100, 140)}/${getRandomInt(60, 90)}`,  // systolic/diastolic
+                    hr: getRandomInt(60, 100),    // bpm
+                    rr: getRandomInt(12, 20),     // breaths/min
+                    temp: getRandomFloat(97.0, 99.5).toFixed(1), // Fahrenheit
+                    o2: getRandomInt(95, 100),    // O2 saturation %
                   },
                   time: Date.now(),
                   patientID: Date.now().toString().slice(-6),
                 };
 
-                // ✅ 3. Post to database
                 await fetch("/api/patient", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
