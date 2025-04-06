@@ -46,7 +46,7 @@ const Dashboard = () => {
     temp: "",
     o2: "",
   });
-  const [patients, setPatients] = useState([]);
+  const [patients, setPatients] = useState<Patient[]>([]);
   const [triageStats, setTriageStats] = useState<TriageStats[]>([]);
   const [rooms, setRooms] = useState<Room[]>(initialRooms);
 
