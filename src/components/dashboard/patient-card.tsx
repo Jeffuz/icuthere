@@ -39,7 +39,7 @@ export function PatientCard({ patient }: PatientCardProps) {
 
       <div className="mb-4">
         <p className="text-gray-500 font-medium text-sm">Chief Complaint:</p>
-        <p className="text-gray-700 lie-clamp-1 text-xs">{patient.chiefComplaint}</p>
+        <p className="text-gray-700 lie-clamp-1 text-xs">{patient.chiefComplaintSummary}</p>
       </div>
 
       <div className="grid grid-cols-5 gap-2 mb-6">
