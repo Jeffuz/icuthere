@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PatientList } from "@/components/dashboard/patient-list";
 import RoomStatus from "@/components/dashboard/room-status";
 import { TriageCard } from "@/components/dashboard/TriageStats";
@@ -28,39 +28,6 @@ interface TriageStats {
   color: string;
 }
 
-const triageData: TriageStats[] = [
-  {
-    level: "Immediate",
-    patients: 1,
-    avgMinutes: 139,
-    color: "#FF0808",
-  },
-  {
-    level: "Emergency",
-    patients: 1,
-    avgMinutes: 132,
-    color: "#FF8406",
-  },
-  {
-    level: "Urgent",
-    patients: 2,
-    avgMinutes: 155,
-    color: "#FFFF09",
-  },
-  {
-    level: "Semi",
-    patients: 1,
-    avgMinutes: 167,
-    color: "#089C07",
-  },
-  {
-    level: "Nonurgent",
-    patients: 1,
-    avgMinutes: 182,
-    color: "#0A6BCE",
-  },
-];
-
 const Dashboard = () => {
   const [listKey, setListKey] = useState(0);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -75,6 +42,58 @@ const Dashboard = () => {
     temp: "",
     o2: "",
   });
+  const [, setPatients] = useState([]);
+  const [triageStats, setTriageStats] = useState<TriageStats[]>([]);
+
+  useEffect(() => {
+    const fetchPatients = async () => {
+      try {
+        const res = await fetch("/api/patient");
+        const data = await res.json();
+        setPatients(data);
+
+        const colorMap: Record<TriageLevel, string> = {
+          Immediate: "#FF0808",
+          Emergency: "#FF8406",
+          Urgent: "#FFFF09",
+          Semi: "#089C07",
+          Nonurgent: "#0A6BCE",
+        };
+
+        // Count patients per triage level
+        const counts: Record<TriageLevel, number> = {
+          Immediate: 0,
+          Emergency: 0,
+          Urgent: 0,
+          Semi: 0,
+          Nonurgent: 0,
+        };
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        data.forEach((p: any) => {
+          if (counts[p.triageLevel as TriageLevel] !== undefined) {
+            counts[p.triageLevel as TriageLevel]++;
+          }
+        });
+
+        // Create TriageStats array
+        const stats: TriageStats[] = (Object.keys(counts) as TriageLevel[]).map(
+          (level) => ({
+            level,
+            patients: counts[level],
+            avgMinutes: 0, // optional: update this if you have wait time info
+            color: colorMap[level],
+          })
+        );
+
+        setTriageStats(stats);
+      } catch (err) {
+        console.error("Failed to fetch patients", err);
+      }
+    };
+
+    fetchPatients();
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -370,10 +389,11 @@ const Dashboard = () => {
           </div>
           {/* Current Hostpital Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {triageData.map((triage) => (
+            {triageStats.map((triage) => (
               <TriageCard key={triage.level} data={triage} />
             ))}
           </div>
+
           {/* Hospital Data */}
           <div className="flex min-md:space-x-6 md:flex-row flex-col">
             {/* Waiting Patients */}
