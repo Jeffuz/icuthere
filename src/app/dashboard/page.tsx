@@ -1,5 +1,5 @@
 "use client";
-
+import { useState } from "react";
 import { PatientList } from "@/components/dashboard/patient-list";
 import RoomStatus from "@/components/dashboard/room-status";
 import { TriageCard } from "@/components/dashboard/TriageStats";
@@ -61,7 +61,79 @@ const triageData: TriageStats[] = [
   },
 ];
 
-const page = () => {
+const Dashboard = () => {
+  const [form, setForm] = useState({
+    name: "",
+    age: "",
+    chiefComplaint: "",
+    triageLevel: "",
+    bp: "",
+    hr: "",
+    rr: "",
+    temp: "",
+    o2: "",
+  });
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleTriageChange = (value: string) => {
+    setForm((prev) => ({ ...prev, triageLevel: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const payload = {
+      name: form.name,
+      year: form.age,
+      triageLevel: form.triageLevel,
+      vitalSigns: {
+        bp: form.bp,
+        hr: form.hr,
+        rr: form.rr,
+        temp: form.temp,
+        o2: form.o2,
+      },
+      time: Date.now(),
+      patientID: Date.now().toString().slice(-6),
+      chiefComplaintSummary: form.chiefComplaint,
+    };
+
+    try {
+      const res = await fetch("/api/patient", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        alert("Patient registered successfully!");
+        setForm({
+          name: "",
+          age: "",
+          chiefComplaint: "",
+          triageLevel: "",
+          bp: "",
+          hr: "",
+          rr: "",
+          temp: "",
+          o2: "",
+        });
+      } else {
+        const error = await res.json();
+        alert("Error: " + error.error);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to register patient.");
+    }
+  };
+
   return (
     <main>
       <Navbar />
@@ -88,7 +160,7 @@ const page = () => {
                     Register New Patient
                   </DialogTitle>
                 </DialogHeader>
-                <form className="space-y-6">
+                <form className="space-y-6" onSubmit={handleSubmit}>
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     {/* Patient Name */}
                     <div className="space-y-2">
@@ -98,7 +170,8 @@ const page = () => {
                       <Input
                         id="name"
                         name="name"
-                        placeholder="Full name"
+                        value={form.name}
+                        onChange={handleChange}
                         required
                       />
                     </div>
@@ -112,7 +185,8 @@ const page = () => {
                         id="age"
                         name="age"
                         type="number"
-                        placeholder="Age in years"
+                        value={form.age}
+                        onChange={handleChange}
                         required
                       />
                     </div>
@@ -126,9 +200,9 @@ const page = () => {
                     <Textarea
                       id="chiefComplaint"
                       name="chiefComplaint"
-                      placeholder="Describe the main reason for visit"
+                      value={form.chiefComplaint}
+                      onChange={handleChange}
                       required
-                      className="min-h-[100px]"
                     />
                   </div>
 
@@ -137,15 +211,20 @@ const page = () => {
                     <Label className="text-base">
                       Triage Level <span className="text-red-500">*</span>
                     </Label>
-                    <RadioGroup className="flex flex-wrap gap-6" required>
+                    <RadioGroup
+                      className="flex flex-wrap gap-6"
+                      required
+                      onValueChange={handleTriageChange}
+                      value={form.triageLevel}
+                    >
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem
-                          value="Critical"
-                          id="critical"
+                          value="Immediate"
+                          id="imediate"
                           className="text-[#FF0808] border-[#FF0808"
                         />
                         <Label
-                          htmlFor="critical"
+                          htmlFor="immediate"
                           className="text-[#FF0808] font-medium"
                         >
                           Critical
@@ -216,7 +295,9 @@ const page = () => {
                         </Label>
                         <Input
                           id="bp"
-                          name="vitalSigns.bp"
+                          name="bp"
+                          value={form.bp}
+                          onChange={handleChange}
                           placeholder="120/80"
                         />
                       </div>
@@ -224,7 +305,13 @@ const page = () => {
                         <Label htmlFor="hr" className="text-sm">
                           Heart Rate
                         </Label>
-                        <Input id="hr" name="vitalSigns.hr" placeholder="BPM" />
+                        <Input
+                          id="hr"
+                          name="hr"
+                          value={form.hr}
+                          onChange={handleChange}
+                          placeholder="BPM"
+                        />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="rr" className="text-sm">
@@ -232,7 +319,9 @@ const page = () => {
                         </Label>
                         <Input
                           id="rr"
-                          name="vitalSigns.rr"
+                          name="rr"
+                          value={form.rr}
+                          onChange={handleChange}
                           placeholder="breaths/m"
                         />
                       </div>
@@ -242,7 +331,9 @@ const page = () => {
                         </Label>
                         <Input
                           id="temp"
-                          name="vitalSigns.temp"
+                          name="temp"
+                          value={form.temp}
+                          onChange={handleChange}
                           placeholder="°F"
                         />
                       </div>
@@ -250,7 +341,13 @@ const page = () => {
                         <Label htmlFor="o2" className="text-sm">
                           O₂ Saturation
                         </Label>
-                        <Input id="o2" name="vitalSigns.o2" placeholder="%" />
+                        <Input
+                          id="o2"
+                          name="o2"
+                          value={form.o2}
+                          onChange={handleChange}
+                          placeholder="%"
+                        />
                       </div>
                     </div>
                   </div>
@@ -293,4 +390,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Dashboard;
