@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock } from "lucide-react";
+// import { Clock } from "lucide-react";
 import type { Patient } from "@/types/patient";
 import {
   getTriageBadgeColor,
@@ -68,10 +68,10 @@ export function PatientCard({ patient }: PatientCardProps) {
       </div>
 
       <div className="flex justify-between items-center">
-        <div className="flex items-center text-gray-500">
+        {/* <div className="flex items-center text-gray-500">
           <Clock className="h-4 w-4 mr-1" />
           <span>Waiting: {patient.waitingTime} min</span>
-        </div>
+        </div> */}
         <div></div>
         <button
           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${buttonColor}`}
