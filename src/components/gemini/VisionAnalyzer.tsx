@@ -35,9 +35,8 @@ export function VisionAnalyzer({
     }
 
     if (result.includes("Unclear")) {
-      setParsedResult({
-        explanation: "Insufficient visual data",
-      });
+      setParsedResult({ explanation: "Insufficient visual data" });
+      onExplanationReady("Insufficient visual data");
       return;
     }
 
