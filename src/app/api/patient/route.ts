@@ -97,6 +97,7 @@ export async function POST(req: NextRequest) {
       },
       { status: 201 }
     );
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Error in POST /api/patient:", error.message);
     return NextResponse.json({ error: "Database Error" }, { status: 500 });
