@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Mic, MicOff, Video, VideoOff, Clock, CheckCircle } from "lucide-react"
-import VoiceAssistant from "@/components/voice-assistant"
+// import VoiceAssistant from "@/components/voice-assistant"
 import { fetchAccessToken } from "hume"
 import ClientComponent from "@/components/hume/client-component"
 
@@ -13,7 +13,7 @@ export default function ClientInterface() {
   const [isRecording, setIsRecording] = useState(false)
   const [isVideoOn, setIsVideoOn] = useState(false)
   const [waitingStatus, setWaitingStatus] = useState("waiting") // "waiting" or "ready"
-  const [waitTime, setWaitTime] = useState(15) // minutes
+  const [waitTime] = useState(15) // minutes
   const videoRef = useRef(null)
   const [accessToken, setAccessToken] = useState<string | null>(null)
 
